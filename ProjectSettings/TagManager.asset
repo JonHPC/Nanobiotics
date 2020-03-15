@@ -14,6 +14,7 @@ TagManager:
   - HomingShot
   - MiddleSpawn
   - DetectionRadius
+  - Gem
   layers:
   - Default
   - TransparentFX
@@ -23,8 +24,8 @@ TagManager:
   - UI
   - 
   - 
-  - 
-  - 
+  - Particles
+  - Enemies
   - 
   - 
   - 
@@ -50,4 +51,10 @@ TagManager:
   m_SortingLayers:
   - name: Default
     uniqueID: 0
+    locked: 0
+  - name: Enemies
+    uniqueID: 1999189573
+    locked: 0
+  - name: Particles
+    uniqueID: 3227422237
     locked: 0

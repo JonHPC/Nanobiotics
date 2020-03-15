@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4615331780163221019}
   - component: {fileID: 4615331780163221016}
+  - component: {fileID: 4270597562568463217}
   m_Layer: 0
   m_Name: Enemy1_Placeholder
   m_TagString: Untagged
@@ -68,8 +69,9 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 8e67ba8e818874b679083dd021abd5c1, type: 3}
-  m_Color: {r: 1, g: 0.28773582, b: 0.28773582, a: 1}
+  m_Sprite: {fileID: 5830694933855508796, guid: 86f0c4db4a994440eb41f847055792a1,
+    type: 3}
+  m_Color: {r: 1, g: 0.23113209, b: 0.23113209, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -79,6 +81,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &4270597562568463217
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4615331780163221018}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 441c920bfb0f84e5f8b03b59d8adfe4f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &4615331781486001462
 GameObject:
   m_ObjectHideFlags: 0
@@ -165,3 +186,5 @@ MonoBehaviour:
   health: 2
   moveSpeed: 5
   score: 100
+  enemyShot: {fileID: 8317095876236323328, guid: f3db8599ffd034746942d8f11c0d96a0,
+    type: 3}

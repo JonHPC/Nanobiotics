@@ -94,6 +94,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7391029088175138061}
   - component: {fileID: 7195260770874758581}
+  - component: {fileID: 1028262203761552271}
   m_Layer: 0
   m_Name: HomingShotUpgrade_Placeholder
   m_TagString: Untagged
@@ -152,8 +153,9 @@ SpriteRenderer:
   m_SortingLayerID: 0
   m_SortingLayer: 0
   m_SortingOrder: 0
-  m_Sprite: {fileID: 21300000, guid: 12c63a6ce16394c34ae2edf2f31212f0, type: 3}
-  m_Color: {r: 0.89287335, g: 0.23113209, b: 1, a: 1}
+  m_Sprite: {fileID: -5233616716421470238, guid: f6e056921e1444ea8a07146be9bb837d,
+    type: 3}
+  m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
   m_FlipY: 0
   m_DrawMode: 0
@@ -163,3 +165,22 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &1028262203761552271
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7780737475603616400}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: f33356e52ae204533a4462804d96886d, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
