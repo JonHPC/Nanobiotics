@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class LaserShot : MonoBehaviour
 {
-    public int damage = 2;
+    public int damage = 4;
 
     private float shotSpeed = 40.0f;
 
@@ -31,6 +31,7 @@ public class LaserShot : MonoBehaviour
             //Destroys this basic shot when it collides with a boundary
             Destroy(gameObject);
         }
+
 
     }
 }

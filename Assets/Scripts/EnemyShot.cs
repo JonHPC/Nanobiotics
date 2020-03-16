@@ -57,6 +57,7 @@ public class EnemyShot : MonoBehaviour
 
             GameController.instance.lives -= 1;//subtracts one life upon colliding with the player
             GameController.instance.isDead = true; //changes the isDead bool to true when the player dies
+            GameController.instance.shakeNow();
             GameController.instance.playerDeathParticles(other.transform);
             Destroy(other.gameObject);
             Destroy(gameObject);

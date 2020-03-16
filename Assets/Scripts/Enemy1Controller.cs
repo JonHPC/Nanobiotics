@@ -31,6 +31,7 @@ public class Enemy1Controller : MonoBehaviour
             //gameController.GetComponent<GameController>().score += score; //accesses the GameController script and adds the 'score' value of the enemy
             GameController.instance.score += score; //accesses the GameController instance and adds the 'score' value of the enemy
             GameController.instance.lifeBonus += score; //adds the score amount to the lifeBonus
+            GameController.instance.untilNextDose -= score;
             GameController.instance.spawnUpgrade(transform);//runs this function for a chance to drop items
             GameController.instance.enemyDeathParticles(transform);
             Destroy(gameObject);//if the health of this enemy drops to or below 0, destroy this gameObject
@@ -70,6 +71,7 @@ public class Enemy1Controller : MonoBehaviour
             //gameController.GetComponent<GameController>().lives -= 1;//subtracts one life upon colliding with the player
             GameController.instance.lives -= 1;//subtracts one life upon colliding with the player
             GameController.instance.isDead = true; //changes the isDead bool to true when the player dies
+            GameController.instance.shakeNow();
             GameController.instance.playerDeathParticles(other.transform);
             Destroy(other.gameObject);//destroys the player upon collision
 
@@ -77,13 +79,25 @@ public class Enemy1Controller : MonoBehaviour
     }
 
     void OnTriggerEnter2D(Collider2D other){
-        if(other.gameObject.tag == "HomingShot"){
+        if (other.gameObject.tag == "HomingShot")
+        {
             health -= other.gameObject.GetComponent<HomingShot>().damage; //subtracts health based on the damage of the homing shot received
+            GameController.instance.enemyHitParticles(other.transform);
+            GameController.instance.HomingExplosion(transform);
             Destroy(other.gameObject);
+        }
+        else if (other.gameObject.tag == "HomingExplosion")
+        {
+            health -= other.gameObject.GetComponent<HomingExplosion>().damage;
+            GameController.instance.enemyHitParticles(other.transform);
         }
         else if(other.gameObject.tag == "DetectionRadius" && other.gameObject.GetComponent<DetectionRadius>().lockedOn == false){
             other.gameObject.GetComponent<DetectionRadius>().homingShot.target = transform;
             other.gameObject.GetComponent<DetectionRadius>().lockedOn = true;
+        }
+        else if(other.gameObject.tag == "Bomb")
+        {
+            health -= 10;
         }
     }
 
@@ -107,7 +121,7 @@ public class Enemy1Controller : MonoBehaviour
 
     IEnumerator destroyEnemyShot(GameObject enemyShotThing){
 
-        yield return new WaitForSeconds(3f);
+        yield return new WaitForSeconds(1f);
         Destroy(enemyShotThing);
     }
 }

@@ -10,6 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4387570802467553790}
   - component: {fileID: 4387570802467553785}
+  - component: {fileID: 6458772060101012244}
   m_Layer: 9
   m_Name: Boss1_Sprite
   m_TagString: Untagged
@@ -67,7 +68,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 8579933983931842467, guid: 86f0c4db4a994440eb41f847055792a1,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -80,6 +81,25 @@ SpriteRenderer:
   m_WasSpriteAssigned: 1
   m_MaskInteraction: 0
   m_SpriteSortPoint: 0
+--- !u!95 &6458772060101012244
+Animator:
+  serializedVersion: 3
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4387570802467553791}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 441c920bfb0f84e5f8b03b59d8adfe4f, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!1 &4387570803437082177
 GameObject:
   m_ObjectHideFlags: 0
@@ -92,6 +112,7 @@ GameObject:
   - component: {fileID: 4387570803437082176}
   - component: {fileID: 469755670223369515}
   - component: {fileID: 830390539818849576}
+  - component: {fileID: 917434147}
   m_Layer: 9
   m_Name: Boss1
   m_TagString: Enemy
@@ -108,7 +129,7 @@ Transform:
   m_GameObject: {fileID: 4387570803437082177}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 6.15, y: 0, z: 0}
-  m_LocalScale: {x: 5, y: 5, z: 1}
+  m_LocalScale: {x: 2, y: 2, z: 1}
   m_Children:
   - {fileID: 4387570802467553790}
   - {fileID: 1289605558345455889}
@@ -130,7 +151,7 @@ CircleCollider2D:
   m_UsedByComposite: 0
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
-  m_Radius: 0.56
+  m_Radius: 0.53
 --- !u!50 &469755670223369515
 Rigidbody2D:
   serializedVersion: 4
@@ -139,7 +160,7 @@ Rigidbody2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 4387570803437082177}
-  m_BodyType: 0
+  m_BodyType: 1
   m_Simulated: 1
   m_UseFullKinematicContacts: 0
   m_UseAutoMass: 0
@@ -167,11 +188,25 @@ MonoBehaviour:
   health: 100
   moveSpeed: 1
   score: 10000
-  enemyShot: {fileID: 8317095876236323328, guid: f3db8599ffd034746942d8f11c0d96a0,
-    type: 3}
   fireRate: 1
   yCenter: 0
   height: 8
+  bossCannon: {fileID: 1289605558345455889}
+--- !u!114 &917434147
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4387570803437082177}
+  m_Enabled: 0
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 414671f8567744799afa738b4c1202b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletsAmount: 10
+  startAngle: 180
+  endAngle: 360
 --- !u!1 &6752643486000141088
 GameObject:
   m_ObjectHideFlags: 0
@@ -181,6 +216,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1289605558345455889}
+  - component: {fileID: 887484093}
   m_Layer: 9
   m_Name: BossCannon
   m_TagString: Untagged
@@ -196,9 +232,24 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6752643486000141088}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -0.54, y: 0, z: 0}
+  m_LocalPosition: {x: -0.39, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 4387570803437082179}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &887484093
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6752643486000141088}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 414671f8567744799afa738b4c1202b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  bulletsAmount: 10
+  startAngle: 180
+  endAngle: 360

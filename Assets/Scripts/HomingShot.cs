@@ -9,7 +9,7 @@ public class HomingShot : MonoBehaviour
     [SerializeField] float shotSpeed = 300.0f;
     [SerializeField] float rotateSpeed = 2000f;
 
-    public int damage = 4;
+    public int damage = 8;
     private Rigidbody2D rb;
 
     // Start is called before the first frame update

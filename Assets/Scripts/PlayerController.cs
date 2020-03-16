@@ -39,9 +39,12 @@ public class PlayerController : MonoBehaviour
     public GameObject shotSpawn2;
     public GameObject shotSpawnBack;
     public GameObject companion;
+
+    public GameObject bomb;
     public bool isInvincible = true;
 
-
+    public float startAngle;
+    public float endAngle;
 
     private SpriteRenderer spriteColor;
     private float timer;
@@ -51,6 +54,8 @@ public class PlayerController : MonoBehaviour
     private Transform shotSpawnTransform1;
     private Transform shotSpawnTransform2;
     private Transform shotSpawnTransformBack;
+    private Vector2 bulletMoveDirection;
+    public int bulletsAmount = 3;
 
     private bool moveUp = false;
     private bool moveDown = false;
@@ -79,24 +84,25 @@ public class PlayerController : MonoBehaviour
         movePlayer();
         shoot();
         checkCompanion();
+        explodeBomb();
     }
 
     void movePlayer(){
 
         //checks the player input to move the player forward/backwards
-        if (Input.GetKey("d")){
+        if (Input.GetKey("d") && transform.position.x < 8f){
             //Debug.Log("Move forward");
             Vector3 move = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"),0);
             transform.position += move * playerSpeed * Time.deltaTime;
 
         }
-        else if(Input.GetKey("a")){
+        else if(Input.GetKey("a") && transform.position.x > -8f){
             //Debug.Log("Move backwards");
             Vector3 move = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
             transform.position += move * playerSpeed * Time.deltaTime;
         }
         //checks player input to move the player up/down
-        else if (Input.GetKey("w"))
+        else if (Input.GetKey("w") && transform.position.y < 4.5f )
         {
             //Debug.Log("Move up");
             Vector3 move = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
@@ -106,7 +112,7 @@ public class PlayerController : MonoBehaviour
             anim.SetBool("moveUp", true);
             anim.SetBool("moveDown", false);
         }
-        else if (Input.GetKey("s")){
+        else if (Input.GetKey("s") && transform.position.y > -4.5f){
             //Debug.Log("Move down");
             Vector3 move = new Vector3(Input.GetAxis("Horizontal"), Input.GetAxis("Vertical"), 0);
             transform.position += move * playerSpeed * Time.deltaTime;
@@ -139,9 +145,31 @@ public class PlayerController : MonoBehaviour
             else if(Input.GetKey("space") && GameController.instance.spreadShotOn == true){
 
                 fireRate = 0.2f;
+                startAngle = 60f;
+                endAngle = 120f;
+
                 GameObject shot0 = Instantiate(spreadShot, shotSpawnTransform.position, Quaternion.identity) as GameObject;
                 GameObject shot1 = Instantiate(spreadShot, shotSpawnTransform1.position, Quaternion.identity) as GameObject;
                 GameObject shot2 = Instantiate(spreadShot, shotSpawnTransform2.position, Quaternion.identity) as GameObject;
+                /*float angleStep = (endAngle - startAngle) / bulletsAmount;
+                float angle = startAngle;
+
+                for (int i = 0; i < bulletsAmount + 1; i++)
+                {
+                    float bulDirX = transform.position.x + Mathf.Sin((angle * Mathf.PI) / 180f);
+                    float bulDirY = transform.position.y + Mathf.Cos((angle * Mathf.PI) / 180f);
+
+                    Vector3 bulMoveVector = new Vector3(bulDirX, bulDirY, 0f);
+                    Vector2 bulDir = (bulMoveVector - transform.position).normalized;
+
+                    GameObject bul = PlayerBulletPool.bulletPoolInstance.GetBullet();
+                    bul.transform.position = transform.position;
+                    bul.transform.rotation = transform.rotation;
+                    bul.SetActive(true);
+                    bul.GetComponent<SpreadProjectile>().SetMoveDirection(bulDir);
+
+                    angle += angleStep;
+                }*/
                 timer = 0;
             }
             else if(Input.GetKey("space") && GameController.instance.laserShotOn == true){
@@ -179,6 +207,22 @@ public class PlayerController : MonoBehaviour
     void checkCompanion(){
         if(GameController.instance.companionShotOn == true){
             companion.SetActive(true);
+        }
+    }
+
+    void explodeBomb(){
+        if(Input.GetKeyDown("b") && GameController.instance.bombs > 0){
+            //Debug.Log("BOMB");
+            GameController.instance.bombs -= 1;
+            GameController.instance.bombs = Mathf.Clamp(GameController.instance.bombs, 0, 99);
+
+            GameObject bomb1 = Instantiate(bomb, transform.position, Quaternion.identity) as GameObject;
+
+
+            /*for (int i = 0; i < GameController.instance.currentEnemies.Length; i++)
+            {
+                Destroy(GameController.instance.currentEnemies[i]);
+            }*/
         }
     }
 

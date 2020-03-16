@@ -372,7 +372,11 @@ MonoBehaviour:
   shotSpawn2: {fileID: 1375011766019680962}
   shotSpawnBack: {fileID: 1147711040}
   companion: {fileID: 4196291696995169142}
+  bomb: {fileID: 8936602691529058608, guid: 38cf5b6f7b96b4e94b7149b483367f0c, type: 3}
   isInvincible: 1
+  startAngle: 0
+  endAngle: 0
+  bulletsAmount: 3
 --- !u!50 &3334394130386862480
 Rigidbody2D:
   serializedVersion: 4
@@ -462,7 +466,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 8
   m_Sprite: {fileID: 644828275235479608, guid: 20904a28df0c64ddcbd99a17ce61cfc2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
   m_FlipX: 0
@@ -609,7 +613,7 @@ SpriteRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: 2
   m_Sprite: {fileID: 3196145763551011166, guid: aece1fe7422ef444a92194eb9ec180a7,
     type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}

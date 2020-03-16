@@ -5,7 +5,7 @@ using UnityEngine;
 public class SpreadShotUpgrade : MonoBehaviour
 {
     public float moveSpeed = 5.0f;
-
+    public int score = 100;
     // Start is called before the first frame update
     void Start()
     {
@@ -29,6 +29,9 @@ public class SpreadShotUpgrade : MonoBehaviour
             GameController.instance.backShotOn = false;
             GameController.instance.laserShotOn = false;
             GameController.instance.homingShotOn = false;
+            GameController.instance.score += score;
+            GameController.instance.untilNextDose -= score;
+            GameController.instance.UpgradePickupSFX();
             Destroy(gameObject);//destroys this gameObject on collision with the player
 
         }

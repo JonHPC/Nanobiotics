@@ -8,7 +8,9 @@ public class Boss1 : MonoBehaviour
     public float moveSpeed = 1f;
     public int score = 10000;
 
-    public GameObject enemyShot;
+    private bool moveUp = true;
+
+    //public GameObject enemyShot;
 
     private float timer;
     public float fireRate = 1f;
@@ -22,6 +24,10 @@ public class Boss1 : MonoBehaviour
     void Start()
     {
         fireRate = 1f;
+        moveSpeed = 1f;
+        moveUp = true;
+        health = 125;
+        score = 10000;
 
     }
 
@@ -38,13 +44,15 @@ public class Boss1 : MonoBehaviour
             //gameController.GetComponent<GameController>().score += score; //accesses the GameController script and adds the 'score' value of the enemy
             GameController.instance.score += score; //accesses the GameController instance and adds the 'score' value of the enemy
             GameController.instance.lifeBonus += score; //adds the score amount to the lifeBonus
+            GameController.instance.untilNextDose -= score;
             GameController.instance.spawnBossDrops(transform);//runs this function for a chance to drop items
-            GameController.instance.enemyDeathParticles(transform);
+            GameController.instance.shakeNow();
+            GameController.instance.bossDeathParticles(transform);
             GameController.instance.boss1Alive = false;
             Destroy(gameObject);//if the health of this enemy drops to or below 0, destroy this gameObject
         }
 
-        enemyShootsAtPlayer();//periodically shoots at the player's current location
+        //enemyShootsAtPlayer();//periodically shoots at the player's current location
     }
 
     void OnCollisionEnter2D(Collision2D other)
@@ -68,7 +76,7 @@ public class Boss1 : MonoBehaviour
         else if (other.gameObject.tag == "HomingShot")
         {
             //health -= other.gameObject.GetComponent<HomingShot>().damage; //subtracts health based on the damage of the homing shot received
-            GameController.instance.enemyHitParticles(other.transform);
+            //GameController.instance.enemyHitParticles(other.transform);
         }
         else if (other.gameObject.tag == "BackShot")
         {
@@ -80,6 +88,7 @@ public class Boss1 : MonoBehaviour
             //gameController.GetComponent<GameController>().lives -= 1;//subtracts one life upon colliding with the player
             GameController.instance.lives -= 1;//subtracts one life upon colliding with the player
             GameController.instance.isDead = true; //changes the isDead bool to true when the player dies
+            GameController.instance.shakeNow();
             GameController.instance.playerDeathParticles(other.transform);
             Destroy(other.gameObject);//destroys the player upon collision
 
@@ -91,16 +100,27 @@ public class Boss1 : MonoBehaviour
         if (other.gameObject.tag == "HomingShot")
         {
             health -= other.gameObject.GetComponent<HomingShot>().damage; //subtracts health based on the damage of the homing shot received
+            GameController.instance.enemyHitParticles(other.transform);
+            GameController.instance.HomingExplosion(transform);
             Destroy(other.gameObject);
+        }
+        else if(other.gameObject.tag == "HomingExplosion")
+        {
+            health -= other.gameObject.GetComponent<HomingExplosion>().damage;
+            GameController.instance.enemyHitParticles(other.transform);
         }
         else if (other.gameObject.tag == "DetectionRadius" && other.gameObject.GetComponent<DetectionRadius>().lockedOn == false)
         {
             other.gameObject.GetComponent<DetectionRadius>().homingShot.target = transform;
             other.gameObject.GetComponent<DetectionRadius>().lockedOn = true;
         }
+        else if (other.gameObject.tag == "Bomb")
+        {
+            health -= 10;
+        }
     }
 
-    void enemyShootsAtPlayer()
+    /*void enemyShootsAtPlayer()
     {
 
         timer += Time.deltaTime;
@@ -117,7 +137,7 @@ public class Boss1 : MonoBehaviour
         }
 
 
-    }
+    }*/
 
     IEnumerator destroyEnemyShot(GameObject enemyShotThing)
     {
@@ -127,6 +147,23 @@ public class Boss1 : MonoBehaviour
     }
 
     void movePattern(){
-        transform.position = new Vector3(transform.position.x, yCenter + Mathf.PingPong(Time.time * 2, height) - height/2f, transform.position.z);
+        //transform.position = new Vector3(transform.position.x, yCenter + Mathf.PingPong(Time.time * 2, height) - height/2f, transform.position.z);
+        if (transform.position.y > 4.5f)
+        {
+            moveUp = false;
+        }
+        else if (transform.position.y < -4.5f)
+        {
+            moveUp = true;
+        }
+
+        if (moveUp == true)
+        {
+            transform.position = new Vector2(transform.position.x, transform.position.y + moveSpeed * Time.deltaTime);
+        }
+        else
+        {
+            transform.position = new Vector2(transform.position.x, transform.position.y - moveSpeed * Time.deltaTime);
+        }
     }
 }

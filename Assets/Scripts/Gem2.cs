@@ -22,6 +22,8 @@ public class Gem2 : MonoBehaviour
         {
             GameController.instance.score += score;//adds this objects score to the total score
             GameController.instance.lifeBonus += score;
+            GameController.instance.untilNextDose -= score;
+            GameController.instance.PlayGemPickup();
             Destroy(gameObject);//destroys this gameObject on collision with the player
 
         }

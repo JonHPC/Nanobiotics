@@ -5,7 +5,7 @@ using UnityEngine;
 public class HomingShotUpgrade : MonoBehaviour
 {
     public float moveSpeed = 5.0f;
-
+    public int score = 100;
     // Start is called before the first frame update
     void Start()
     {
@@ -26,6 +26,9 @@ public class HomingShotUpgrade : MonoBehaviour
         {
             GameController.instance.homingShotOn = true;//activates the spread shot upgrade on the the game controller
             GameController.instance.basicShotOn = false;//turns off the basic shot
+            GameController.instance.score += score;
+            GameController.instance.untilNextDose -= score;
+            GameController.instance.UpgradePickupSFX();
             Destroy(gameObject);//destroys this gameObject on collision with the player
 
         }

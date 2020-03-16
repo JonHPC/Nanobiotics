@@ -10,6 +10,8 @@ public class GameController : MonoBehaviour
     public int lives;
     public int score;
     public int lifeBonus;
+    public int untilNextDose;
+    public int bombs;
     public bool isDead;
 
     public bool basicShotOn = true;
@@ -21,8 +23,18 @@ public class GameController : MonoBehaviour
 
     public bool boss1Alive = true;
     public bool boss1Spawned = false;
+    public bool boss2Alive = true;
+    public bool boss2Spawned = false;
+    public bool boss3Alive = true;
+    public bool boss3Spawned = false;
 
     public bool startWave = true;
+
+    public bool ableToRespawn = true;
+
+    public GameObject[] currentEnemies;
+
+    public GameObject homingExplosion;
 
     void Awake(){
         //Determine if our instance is null
@@ -40,6 +52,10 @@ public class GameController : MonoBehaviour
     public TextMeshProUGUI playerLivesText;
 	public TextMeshProUGUI scoreText;
 	public TextMeshProUGUI levelText;
+    public TextMeshProUGUI bombsText;
+
+    public GameObject winScreen;
+    public GameObject loseScreen;
 
     public GameObject[] upgradeText;
     public GameObject[] upgrades;
@@ -53,9 +69,12 @@ public class GameController : MonoBehaviour
     public Transform[] spawnPoints;
     public Transform playerSpawnPoint;
 
+    public GameObject[] enemy;
     public GameObject enemy1;
     public float spawnRate = 0.5f;
 
+
+    public GameObject[] boss;
     public GameObject boss1;
     public Transform boss1SpawnPoint;
 
@@ -66,21 +85,38 @@ public class GameController : MonoBehaviour
     public GameObject playerDeath;
     public GameObject playerDeathRewind;
 
+    public AudioSource lifeObtained;
+    public AudioSource gemPickup;
+    public AudioSource bombPickup;
+    public AudioSource upgradePickup;
+
+    public ShakeBehavior shake;
+
     private float timer;
 
     void Start(){
-        lives = PlayerPrefs.GetInt("lives", 3); //initializes the amount of playerLives
+        lives = PlayerPrefs.GetInt("lives", 10); //initializes the amount of playerLives
         score = PlayerPrefs.GetInt("score", 0); //initializes the score
         level = SceneManager.GetActiveScene().buildIndex; //gets and stores the buildIndex as a int
         isDead = false;
+        spawnRate = 0.7f;
+        winScreen.SetActive(false);
+        loseScreen.SetActive(false);
+        Time.timeScale = 1f;
+        ableToRespawn = true;
+        untilNextDose = 10000;
+                    
     }
 
     void Update(){
 
+        playerLoses();
         updateUI(); //updates the UI text every frame
-        //spawnEnemy(); //spawns random enemies
+        spawnEnemy(); //spawns random enemies
         playerDead();//checks to see if the player is dead
         lifeBonusScore();//checks to see if player gets a bonus life
+        UpdateCurrentEnemiesArray();
+
     }
 
     void FixedUpdate(){
@@ -90,8 +126,9 @@ public class GameController : MonoBehaviour
     void updateUI(){
 
         playerLivesText.text = "x " + lives.ToString();
-        scoreText.text = "Score: " + score.ToString();
-        levelText.text = "Level: " + wave.ToString();
+        scoreText.text = "Until next dose: " + untilNextDose.ToString();
+        levelText.text = "Wave: " + wave.ToString();
+        bombsText.text = "  x " + bombs.ToString();
     }
 
     void spawnEnemy(){
@@ -102,7 +139,7 @@ public class GameController : MonoBehaviour
             if (timer > spawnRate && numberOfEnemies >= 1)
             {
                 int spawn = Random.Range(0, 9);
-                GameObject enemy = Instantiate(enemy1, spawnPoints[spawn].position, Quaternion.identity) as GameObject;
+                GameObject enemySpawn = Instantiate(enemy[1], spawnPoints[spawn].position, Quaternion.identity) as GameObject;
                 timer = 0;
                 numberOfEnemies -= 1;
             }
@@ -117,7 +154,7 @@ public class GameController : MonoBehaviour
         else if(wave == 2 && startWave == true){
             if(timer > spawnRate && numberOfEnemies >= 1){
                 int spawn = Random.Range(0, 9);
-                GameObject enemy = Instantiate(enemy1, spawnPoints[spawn].position, Quaternion.identity) as GameObject;
+                GameObject enemySpawn = Instantiate(enemy[0], spawnPoints[spawn].position, Quaternion.identity) as GameObject;
                 timer = 0;
                 numberOfEnemies -= 1;
             }
@@ -132,25 +169,25 @@ public class GameController : MonoBehaviour
 
 
             if(boss1Spawned == false) {
-                GameObject enemy = Instantiate(boss1, boss1SpawnPoint.position, Quaternion.identity) as GameObject;
+                GameObject enemyBossSpawn = Instantiate(boss[0], boss1SpawnPoint.position, Quaternion.identity) as GameObject;
                 boss1Spawned = true;
             }
             else if(wave == 3 && boss1Alive == false){
                 StartCoroutine(timeBetweenWaves(5f));
                 numberOfEnemies = 50;
-                spawnRate = 0.1f;
+                spawnRate = 0.3f;
             }
         }
         else if(wave == 4 && startWave == true){
             int spawn = Random.Range(0, 9);
             if (timer > spawnRate && numberOfEnemies >= 1){
-                GameObject enemy = Instantiate(enemy1, spawnPoints[spawn].position, Quaternion.identity) as GameObject;
+                GameObject enemySpawn = Instantiate(enemy[0], spawnPoints[spawn].position, Quaternion.identity) as GameObject;
                 numberOfEnemies -= 1;
             }
             else if(numberOfEnemies <= 0){
                 StartCoroutine(timeBetweenWaves(5f));
                 numberOfEnemies = 50;
-                spawnRate = 0.5f;
+                spawnRate = 0.7f;
             }
             
 
@@ -160,10 +197,44 @@ public class GameController : MonoBehaviour
             if (timer > spawnRate && numberOfEnemies >= 1)
             {
                 int spawn = Random.Range(0, 9);
-                GameObject enemy = Instantiate(enemy1, spawnPoints[spawn].position, Quaternion.identity) as GameObject;
+                GameObject enemySpawn = Instantiate(enemy[1], spawnPoints[spawn].position, Quaternion.identity) as GameObject;
                 timer = 0;
                 numberOfEnemies -= 1;
             }
+            else if (numberOfEnemies <= 0)
+            {
+
+                StartCoroutine(timeBetweenWaves(5f));
+                numberOfEnemies = 25;
+            }
+        }
+
+        else if (wave == 6 && startWave == true){
+            if (timer > spawnRate && numberOfEnemies >= 1)
+            {
+                int spawn = Random.Range(0, 9);
+                int randomEnemy = Random.Range(0, 10);
+
+                if (randomEnemy <= 4)
+                {
+                    GameObject enemySpawn = Instantiate(enemy[1], spawnPoints[spawn].position, Quaternion.identity) as GameObject;
+                    timer = 0;
+                    numberOfEnemies -= 1;
+                }
+                else if (randomEnemy > 4 && randomEnemy <= 7)
+                {
+                    GameObject enemySpawn = Instantiate(enemy[0], spawnPoints[spawn].position, Quaternion.identity) as GameObject;
+                    timer = 0;
+                    numberOfEnemies -= 1;
+                }
+                else
+                {
+                    GameObject enemySpawn = Instantiate(enemy[2], spawnPoints[spawn].position, Quaternion.identity) as GameObject;
+                    timer = 0;
+                    numberOfEnemies -= 1;
+                }
+            }
+
             else if (numberOfEnemies <= 0)
             {
 
@@ -172,7 +243,110 @@ public class GameController : MonoBehaviour
             }
         }
 
-       
+        else if (wave == 7 && startWave == true)
+        {
+
+
+            if (boss2Spawned == false)
+            {
+                GameObject enemyBossSpawn = Instantiate(boss[1], boss1SpawnPoint.position, Quaternion.identity) as GameObject;
+                boss2Spawned = true;
+            }
+            else if (wave == 7 && boss2Alive == false)
+            {
+                StartCoroutine(timeBetweenWaves(5f));
+                numberOfEnemies = 50;
+                spawnRate = 0.7f;
+            }
+        }
+
+        else if (wave == 8 && startWave == true)
+        {
+            if (timer > spawnRate && numberOfEnemies >= 1)
+            {
+                int spawn = Random.Range(0, 9);
+                int randomEnemy = Random.Range(0, 10);
+
+                if (randomEnemy <= 4)
+                {
+                    GameObject enemySpawn = Instantiate(enemy[1], spawnPoints[spawn].position, Quaternion.identity) as GameObject;
+                    timer = 0;
+                    numberOfEnemies -= 1;
+                }
+                else if (randomEnemy > 4 && randomEnemy <= 7)
+                {
+                    GameObject enemySpawn = Instantiate(enemy[0], spawnPoints[spawn].position, Quaternion.identity) as GameObject;
+                    timer = 0;
+                    numberOfEnemies -= 1;
+                }
+                else
+                {
+                    GameObject enemySpawn = Instantiate(enemy[2], spawnPoints[spawn].position, Quaternion.identity) as GameObject;
+                    timer = 0;
+                    numberOfEnemies -= 1;
+                }
+            }
+
+            else if (numberOfEnemies <= 0)
+            {
+
+                StartCoroutine(timeBetweenWaves(5f));
+                numberOfEnemies = 20;
+                spawnRate = 0.5f;
+            }
+        }
+
+        else if (wave == 9 && startWave == true)
+        {
+            if (timer > spawnRate && numberOfEnemies >= 1)
+            {
+                int spawn = Random.Range(0, 9);
+
+
+
+                    GameObject enemySpawn = Instantiate(enemy[2], spawnPoints[spawn].position, Quaternion.identity) as GameObject;
+                    timer = 0;
+                    numberOfEnemies -= 1;
+
+            }
+
+            else if (numberOfEnemies <= 0)
+            {
+
+                StartCoroutine(timeBetweenWaves(5f));
+                numberOfEnemies = 100;
+                spawnRate = 8f;
+            }
+        }
+
+        else if (wave == 10 && startWave == true)
+        {
+
+
+            if (boss3Spawned == false)
+            {
+                GameObject enemyBossSpawn = Instantiate(boss[2], boss1SpawnPoint.position, Quaternion.identity) as GameObject;
+                boss3Spawned = true;
+            }
+            else if (timer > spawnRate && numberOfEnemies >= 1)
+            {
+                int spawn = Random.Range(0, 9);
+
+                GameObject enemySpawn = Instantiate(enemy[2], spawnPoints[spawn].position, Quaternion.identity) as GameObject;
+                timer = 0;
+                numberOfEnemies -= 1;
+
+            }
+            else if (wave == 10 && boss3Alive == false)
+            {
+                //Debug.Log("Win screen");
+                winScreen.SetActive(true);
+                //StartCoroutine(PauseLose());
+            }
+        }
+
+
+
 
     }
 
@@ -184,7 +358,7 @@ public class GameController : MonoBehaviour
     }
 
     void playerDead(){
-        if(isDead == true){
+        if(isDead == true && ableToRespawn == true){
             StartCoroutine(playerRespawn());
             basicShotOn = true;
             spreadShotOn = false;
@@ -192,6 +366,9 @@ public class GameController : MonoBehaviour
             homingShotOn = false;
             companionShotOn = false;
             backShotOn = false;
+        }
+        else if (ableToRespawn == false){
+
         }
     }
 
@@ -214,11 +391,11 @@ public class GameController : MonoBehaviour
 
             backShotOn = false;
 
-            upgradeText[0].SetActive(false);
+            /*upgradeText[0].SetActive(false);
             upgradeText[1].SetActive(false);
             upgradeText[2].SetActive(false);
             //upgradeText[3].SetActive(false);
-            upgradeText[4].SetActive(false);
+            upgradeText[4].SetActive(false);*/
 
         }
         else if (homingShotOn == true)
@@ -230,11 +407,11 @@ public class GameController : MonoBehaviour
 
             backShotOn = false;
 
-            upgradeText[0].SetActive(false);
+            /*upgradeText[0].SetActive(false);
             upgradeText[1].SetActive(false);
             upgradeText[2].SetActive(true);
             //upgradeText[3].SetActive(false);
-            upgradeText[4].SetActive(false);
+            upgradeText[4].SetActive(false);*/
         }
         else if(spreadShotOn == true){
             basicShotOn = false;
@@ -244,11 +421,11 @@ public class GameController : MonoBehaviour
 
             backShotOn = false;
 
-            upgradeText[0].SetActive(true);
+            /*upgradeText[0].SetActive(true);
             upgradeText[1].SetActive(false);
             upgradeText[2].SetActive(false);
             //upgradeText[3].SetActive(false);
-            upgradeText[4].SetActive(false);
+            upgradeText[4].SetActive(false);*/
         }
         else if(laserShotOn == true){
             basicShotOn = false;
@@ -258,11 +435,11 @@ public class GameController : MonoBehaviour
 
             backShotOn = false;
 
-            upgradeText[0].SetActive(false);
+            /*upgradeText[0].SetActive(false);
             upgradeText[1].SetActive(true);
             upgradeText[2].SetActive(false);
             //upgradeText[3].SetActive(false);
-            upgradeText[4].SetActive(false);
+            upgradeText[4].SetActive(false);*/
         }
 
        
@@ -274,11 +451,11 @@ public class GameController : MonoBehaviour
 
             //backShotOn = true;
 
-            upgradeText[0].SetActive(false);
+            /*upgradeText[0].SetActive(false);
             upgradeText[1].SetActive(false);
             upgradeText[2].SetActive(false);
             //upgradeText[3].SetActive(false);
-            upgradeText[4].SetActive(true);
+            upgradeText[4].SetActive(true)*/
         }
 
         if (companionShotOn == true)
@@ -293,11 +470,11 @@ public class GameController : MonoBehaviour
             //upgradeText[0].SetActive(false);
             //upgradeText[1].SetActive(false);
             //upgradeText[2].SetActive(false);
-            upgradeText[3].SetActive(true);
+            //upgradeText[3].SetActive(true);
             //upgradeText[4].SetActive(false);
         }
         else{
-            upgradeText[3].SetActive(false);
+            //upgradeText[3].SetActive(false);
         }
 
     }
@@ -306,7 +483,7 @@ public class GameController : MonoBehaviour
         int chanceOfDrop = Random.Range(0, 5);
 
         if(chanceOfDrop == 1){
-            int chanceOfUpgrade = Random.Range(0, 10);
+            int chanceOfUpgrade = Random.Range(0, 7);
             if(chanceOfUpgrade == 0){
                 GameObject upgradeItem = Instantiate(upgrades[0], enemyTransform.position, Quaternion.identity) as GameObject;
             }
@@ -327,7 +504,7 @@ public class GameController : MonoBehaviour
             }
         }
         else if(chanceOfDrop == 2){
-            int chanceOfGem = Random.Range(0, 10);
+            int chanceOfGem = Random.Range(0, 12);
             if(chanceOfGem == 0){
                 GameObject gemItem = Instantiate(drops[0], enemyTransform.position, Quaternion.identity) as GameObject;
             }
@@ -339,9 +516,13 @@ public class GameController : MonoBehaviour
             {
                 GameObject gemItem = Instantiate(drops[2], enemyTransform.position, Quaternion.identity) as GameObject;
             }
-            else if (chanceOfGem >= 7)
+            else if (chanceOfGem >= 7 && chanceOfGem < 10)
             {
                 GameObject gemItem = Instantiate(drops[3], enemyTransform.position, Quaternion.identity) as GameObject;
+            }
+            else if(chanceOfGem >= 11)
+            {
+                GameObject gemItem = Instantiate(drops[4], enemyTransform.position, Quaternion.identity) as GameObject;
             }
         }
     }
@@ -376,7 +557,7 @@ public class GameController : MonoBehaviour
         //int randomSpawn = Random.Range(1, 4);
 
         for (int i = 0; i < numberOfGems; i++){
-            int chanceOfGems = Random.Range(0, 4);
+            int chanceOfGems = Random.Range(0, 5);
             //GameObject dropGem = Instantiate(drops[i], enemyTransform.position- new Vector3(randomSpawn, randomSpawn,0), Quaternion.identity) as GameObject;
             GameObject dropGem = Instantiate(drops[chanceOfGems],enemyTransform.position, Quaternion.identity) as GameObject;
 
@@ -385,6 +566,11 @@ public class GameController : MonoBehaviour
         GameObject itemExpand = Instantiate(itemExpander, enemyTransform.position, Quaternion.identity) as GameObject;
         StartCoroutine(destroyParticles(itemExpand));
 
+    }
+
+    public void bossDeathParticles(Transform transform){
+        GameObject bossDeathParticles1 = Instantiate(enemyDeath, transform.position, Quaternion.identity) as GameObject;
+        StartCoroutine(destroyPlayerParticles(bossDeathParticles1));
     }
 
     public void enemyDeathParticles(Transform transform){
@@ -428,9 +614,59 @@ public class GameController : MonoBehaviour
 
     public void lifeBonusScore(){
 
-        if(lifeBonus >= 10000){
+        if(untilNextDose <= 0){
             lifeBonus = 0;
+            untilNextDose = 10000;
             lives += 1;//player gets a life everytime the player gets 10,000 pts
+            lifeObtained.Play();
         }
+    }
+
+    public void UpdateCurrentEnemiesArray()
+    {
+        currentEnemies = GameObject.FindGameObjectsWithTag("Enemy");
+
+
+    }
+
+    public void PlayGemPickup()
+    {
+        gemPickup.Play();
+    }
+
+    public void BombPickupSFX()
+    {
+        bombPickup.Play();
+    }
+
+    public void UpgradePickupSFX()
+    {
+        upgradePickup.Play();
+    }
+
+    public void HomingExplosion(Transform transform)
+    {
+        GameObject homing = Instantiate(homingExplosion, transform.position, Quaternion.identity) as GameObject;
+    }
+
+    public void playerLoses()
+    {
+        if(lives <= 0){
+
+            loseScreen.SetActive(true);
+            ableToRespawn = false;
+            //StartCoroutine(PauseLose());
+        }
+    }
+
+    IEnumerator PauseLose()
+    {
+        yield return new WaitForSeconds(1f);
+        Time.timeScale = 0f;
+    }
+
+    public void shakeNow()
+    {
+        shake.TriggerShake();
     }
 }
