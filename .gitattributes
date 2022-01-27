@@ -17,3 +17,6 @@
 *.ico binary
 
 core.autocrlf=true
+
+#remove from github stats
+jquery.js linguist-vendored=false
